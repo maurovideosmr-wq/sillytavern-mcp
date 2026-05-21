@@ -30,6 +30,8 @@ Built with [fastmcp](https://github.com/jlowin/fastmcp) + [uv](https://docs.astr
 | `embed_cover_image` | Embed a cover/banner image into a character card's `extensions.cover` as base64 data URI. |
 | `extract_cover_image` | Extract the cover image from a character card and save as an image file. |
 | `get_character_card_info` | Read a character card PNG and return its metadata as a formatted text summary. |
+| `explode_character_card` | Split a large JSON character card into multiple smaller YAML/MD/JS/HTML files organized by module. |
+| `implode_character_card` | Reassemble an exploded character card directory back into a single JSON file. |
 
 ### Bundled Resources
 
@@ -204,7 +206,8 @@ sillytavern-mcp/
 │       ├── st_console.py
 │       ├── setup_logging.py
 │       ├── th_doc_reader.py       # list_doc / read_doc tools
-│       └── png_json_converter.py  # convert_png_to_json / convert_json_to_png / embed_cover_image / extract_cover_image / get_character_card_info
+│       ├── png_json_converter.py  # convert_png_to_json / convert_json_to_png / embed_cover_image / extract_cover_image / get_character_card_info
+│       └── character_exploder.py  # explode_character_card / implode_character_card
 ├── docs/
 │   ├── ST-API-Distilled/              # 11 distilled ST REST API doc files
 │   ├── JS-Slash-Runner-Distilled/     # 21 distilled TH doc files
@@ -243,6 +246,8 @@ sillytavern-mcp/
 | `embed_cover_image` | 将封面图以 base64 data URI 嵌入角色卡的 `extensions.cover` |
 | `extract_cover_image` | 从角色卡中提取封面图保存为图片文件 |
 | `get_character_card_info` | 读取角色卡 PNG 并返回元数据文本摘要 |
+| `explode_character_card` | 将大 JSON 角色卡拆分为按模块组织的多个 YAML/MD/JS/HTML 小文件，方便逐块编辑 |
+| `implode_character_card` | 将拆分后的角色卡目录重新拼回单个 JSON 文件 |
 
 ### 内置文档
 
@@ -419,7 +424,8 @@ sillytavern-mcp/
 │       ├── st_console.py
 │       ├── setup_logging.py
 │       ├── th_doc_reader.py     # list_doc / read_doc 工具
-│       └── png_json_converter.py  # PNG↔JSON 互转 & 封面嵌入/提取 工具
+│       ├── png_json_converter.py  # PNG↔JSON 互转 & 封面嵌入/提取 工具
+│       └── character_exploder.py  # explode_character_card / implode_character_card
 ├── docs/
 │   ├── ST-API-Distilled/              # 11 篇蒸馏 ST REST API 文档
 │   ├── JS-Slash-Runner-Distilled/     # 21 篇蒸馏 TH 文档
