@@ -33,10 +33,11 @@ Built with [fastmcp](https://github.com/jlowin/fastmcp) + [uv](https://docs.astr
 
 ### Bundled Resources
 
-This server bundles **46 distilled documentation pages** across three SillyTavern frameworks:
+This server bundles **57 distilled documentation pages** across four SillyTavern frameworks:
 
 | Framework | Topics | Coverage |
 |-----------|--------|----------|
+| **SillyTavern REST API** | 11 | Characters, chats, world info, groups, AI backends, tokenizers, settings, users, extensions, media, TTS/STT/search/SD |
 | **JS-Slash-Runner (Tavern Helper)** | 21 | Scripting, macros, events, characters, worldbooks, variables, regex, audio, presets, chat messages, injection, extensions |
 | **ST-Prompt-Template (EJS Templates)** | 14 | EJS template engine, variable system, injection, characters, presets, regex, utilities, events, worldbook |
 | **MagVarUpdate (MVU Variable Framework)** | 11 | Variable state management, schema protection, commands, extra-model analysis, cleanup, init, API |
@@ -195,7 +196,7 @@ sillytavern-mcp/
 │   │   └── package.json
 │   ├── resources/
 │   │   ├── __init__.py
-│   │   └── docs_distilled.py    # 46 doc resources (docs://TH/*, docs://STPT/*, docs://MVU/*)
+│   │   └── docs_distilled.py    # 57 doc resources (docs://STAPI/*, docs://TH/*, docs://STPT/*, docs://MVU/*)
 │   └── tools/
 │       ├── write_character.py
 │       ├── import_character.py
@@ -205,6 +206,7 @@ sillytavern-mcp/
 │       ├── th_doc_reader.py       # list_doc / read_doc tools
 │       └── png_json_converter.py  # convert_png_to_json / convert_json_to_png / embed_cover_image / extract_cover_image / get_character_card_info
 ├── docs/
+│   ├── ST-API-Distilled/              # 11 distilled ST REST API doc files
 │   ├── JS-Slash-Runner-Distilled/     # 21 distilled TH doc files
 │   ├── ST-Prompt-Template-Distilled/  # 14 distilled STPT doc files
 │   └── MagVarUpdate-Distilled/        # 11 distilled MVU doc files
@@ -244,10 +246,11 @@ sillytavern-mcp/
 
 ### 内置文档
 
-本服务内置 **46 篇蒸馏文档**，覆盖三个 SillyTavern 框架：
+本服务内置 **57 篇蒸馏文档**，覆盖四个 SillyTavern 框架：
 
 | 框架 | 主题数 | 覆盖内容 |
 |------|--------|----------|
+| **SillyTavern REST API** | 11 | 角色卡、聊天、世界书、群组、AI 后端、分词器、设置、用户、扩展、多媒体、TTS/STT/搜索/SD |
 | **JS-Slash-Runner (酒馆助手)** | 21 | 脚本、宏、事件、角色、世界书、变量、正则、音频、预设、聊天消息、注入、扩展 |
 | **ST-Prompt-Template (EJS 模板)** | 14 | EJS 模板引擎、变量系统、注入、角色、预设、正则、工具函数、事件、世界书 |
 | **MagVarUpdate (MVU 变量框架)** | 11 | 变量状态管理、Schema 保护、更新命令、额外模型解析、清理、初始化、API |
@@ -408,7 +411,7 @@ sillytavern-mcp/
 │   │   └── package.json
 │   ├── resources/
 │   │   ├── __init__.py
-│   │   └── docs_distilled.py    # 46 篇文档资源 (docs://TH/*, docs://STPT/*, docs://MVU/*)
+│   │   └── docs_distilled.py    # 57 篇文档资源 (docs://STAPI/*, docs://TH/*, docs://STPT/*, docs://MVU/*)
 │   └── tools/
 │       ├── write_character.py
 │       ├── import_character.py
@@ -418,6 +421,7 @@ sillytavern-mcp/
 │       ├── th_doc_reader.py     # list_doc / read_doc 工具
 │       └── png_json_converter.py  # PNG↔JSON 互转 & 封面嵌入/提取 工具
 ├── docs/
+│   ├── ST-API-Distilled/              # 11 篇蒸馏 ST REST API 文档
 │   ├── JS-Slash-Runner-Distilled/     # 21 篇蒸馏 TH 文档
 │   ├── ST-Prompt-Template-Distilled/  # 14 篇蒸馏 STPT 文档
 │   └── MagVarUpdate-Distilled/        # 11 篇蒸馏 MVU 文档

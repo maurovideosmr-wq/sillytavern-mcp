@@ -10,6 +10,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 DOC_DIRS = [
     {
+        "dir": os.path.join(ROOT, "docs", "ST-API-Distilled"),
+        "uri_prefix": "docs://STAPI",
+        "label": "SillyTavern REST API",
+    },
+    {
         "dir": os.path.join(ROOT, "docs", "JS-Slash-Runner-Distilled"),
         "uri_prefix": "docs://TH",
         "label": "JS-Slash-Runner (Tavern Helper)",
