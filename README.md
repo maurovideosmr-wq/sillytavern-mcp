@@ -6,7 +6,9 @@
 
 ## English
 
-MCP (Model Context Protocol) server for [SillyTavern](https://github.com/SillyTavern/SillyTavern). Enables AI coding agents (such as Kilo) to interact with a running SillyTavern instance — create character cards, run health checks, and read console logs.
+MCP (Model Context Protocol) server for [SillyTavern](https://github.com/SillyTavern/SillyTavern).
+
+Compatible with any MCP client: **Claude Code**, **Cursor**, **Kilo**, **VS Code** (via MCP extensions), and more.
 
 Built with [fastmcp](https://github.com/jlowin/fastmcp) + [uv](https://docs.astral.sh/uv/).
 
@@ -14,68 +16,106 @@ Built with [fastmcp](https://github.com/jlowin/fastmcp) + [uv](https://docs.astr
 
 | Tool | What it does |
 |------|-------------|
-| `write_character_card` | Create a character from name, personality, first message, etc. Writes a V2/V3 PNG card. |
+| `write_character_card` | Create a character card from text attributes (name, personality, first message...). Writes a V2/V3 PNG card to the characters directory. |
 | `import_character_card` | Import an existing character card PNG file. Copies as-is without modifying metadata. |
-| `get_st_diagnostics` | Health check on your running ST — API status, character card integrity, chat files, config, plugins. |
-| `get_st_console` | Read the ST console log (requires the st-console-logger plugin). |
-| `setup_st_logging` | One-click install of the console logger plugin into ST's plugins directory. |
+| `get_st_diagnostics` | Comprehensive health check on a running SillyTavern instance — API connectivity, character card integrity, chat files, config, plugins. Zero configuration needed. |
+| `get_st_console` | Read the SillyTavern console log captured by the st-console-logger plugin. Supports incremental reading. |
+| `setup_st_logging` | One-click install of the console logger plugin into SillyTavern's `plugins/` directory and enable server plugins in `config.yaml`. |
 
-### How It Works
+### Architecture
 
 ```
-Kilo (AI Agent) ←→ sillytavern-mcp (this project) ←→ SillyTavern (your ST)
-                          │
-                          ├── writes character card PNGs to data/.../characters/
-                          ├── reads ST status via HTTP API
-                          └── reads console output via st_console.log (plugin)
+MCP Client (Claude Code / Cursor / Kilo / ...)
+    │
+    ▼
+sillytavern-mcp (this project) ←── reads/writes ──→ ST data directory (character cards, logs)
+    │
+    └── talks to ──→ SillyTavern HTTP API (status, character list, CSRF)
 ```
 
 ### Setup
 
-**Step 1: Install Python 3.11+**
-
-https://www.python.org/downloads/
-
-> During installation on Windows, check **"Add Python to PATH"**.
-
-**Step 2: Install uv (Python package manager)**
-
-Open a terminal (cmd.exe or PowerShell) and run:
-
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
-
-Restart your terminal after this step.
-
-**Step 3: Get the project**
+**Prerequisites:** Python 3.11+ and [uv](https://docs.astral.sh/uv/#installation).
 
 ```bash
 git clone <repo-url> sillytavern-mcp
 cd sillytavern-mcp
-```
-
-Or download and extract the ZIP from GitHub.
-
-**Step 4: Install dependencies**
-
-```bash
 uv sync
 ```
 
-This creates a virtual environment and installs all required packages.
+### MCP Client Configuration
 
-**Step 5: Configure for Kilo**
+Add the server to your MCP client's configuration.
 
-Add this to your `kilo.json` (global at `C:\Users\<you>\.config\kilo\kilo.json` or project-level):
+#### Option 1: VS Code
+
+In `.vscode/mcp.json` or your VS Code MCP settings:
+
+```json
+{
+  "servers": {
+    "sillytavern-mcp": {
+      "type": "local",
+      "command": ["uv", "run", "--directory", "/path/to/sillytavern-mcp", "python", "-m", "sillytavern_mcp"],
+      "env": {
+        "SILLYTAVERN_DATA_DIR": "/path/to/SillyTavern/data",
+        "SILLYTAVERN_USER": "default-user",
+        "SILLYTAVERN_URL": "http://localhost:8000"
+      }
+    }
+  }
+}
+```
+
+#### Option 2: Claude Code
+
+In `~/.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "sillytavern-mcp": {
+      "command": "uv",
+      "args": ["run", "--directory", "/path/to/sillytavern-mcp", "python", "-m", "sillytavern_mcp"],
+      "env": {
+        "SILLYTAVERN_DATA_DIR": "/path/to/SillyTavern/data",
+        "SILLYTAVERN_USER": "default-user",
+        "SILLYTAVERN_URL": "http://localhost:8000"
+      }
+    }
+  }
+}
+```
+
+#### Option 3: Cursor
+
+In Cursor settings → MCP Servers → Add new:
+
+```json
+{
+  "name": "sillytavern-mcp",
+  "type": "command",
+  "command": "uv",
+  "args": ["run", "--directory", "/path/to/sillytavern-mcp", "python", "-m", "sillytavern_mcp"],
+  "env": {
+    "SILLYTAVERN_DATA_DIR": "/path/to/SillyTavern/data",
+    "SILLYTAVERN_USER": "default-user",
+    "SILLYTAVERN_URL": "http://localhost:8000"
+  }
+}
+```
+
+#### Option 4: Kilo
+
+In `~/.config/kilo/kilo.json`:
 
 ```json
 {
   "sillytavern-mcp": {
     "type": "local",
-    "command": ["uv", "run", "--directory", "C:\\path\\to\\sillytavern-mcp", "python", "-m", "sillytavern_mcp"],
+    "command": ["uv", "run", "--directory", "/path/to/sillytavern-mcp", "python", "-m", "sillytavern_mcp"],
     "environment": {
-      "SILLYTAVERN_DATA_DIR": "C:\\path\\to\\SillyTavern\\data",
+      "SILLYTAVERN_DATA_DIR": "/path/to/SillyTavern/data",
       "SILLYTAVERN_USER": "default-user",
       "SILLYTAVERN_URL": "http://localhost:8000"
     },
@@ -84,40 +124,72 @@ Add this to your `kilo.json` (global at `C:\Users\<you>\.config\kilo\kilo.json` 
 }
 ```
 
-Replace the paths with your actual SillyTavern installation locations.
+### Quick Test
 
-**Step 6: Verify it works**
+After configuration, verify the server connects correctly:
 
-Ask your Kilo agent: *"检查 ST 的状态"* (or *"check ST status"*).
+```bash
+uv run python -m sillytavern_mcp
+```
 
-The agent will call `get_st_diagnostics` and report back.
+It will start in stdio mode and wait for MCP protocol messages from your client. No output means it's working.
 
-### Optional: Enable Console Logging
+Ask your AI assistant: *"Can you check the status of my SillyTavern?"*
 
-To let the AI agent read ST's console output (errors, model loading, etc.):
+### Enable Console Logging (Optional)
 
-1. Ask your agent: **"帮我安装日志插件"** (or *"install the console logger plugin"*)
-2. The agent runs `setup_st_logging`, which:
-   - Copies the plugin to ST's `plugins/` directory
-   - Enables server plugins in `config.yaml`
-3. **Restart SillyTavern** (close and reopen it)
-4. After restart, ask: **"看看 ST 的控制台输出"** (or *"show me ST's console"*)
+To let your AI assistant read SillyTavern's console output (errors, model loading, etc.):
 
-No terminal commands needed — your agent handles everything.
+Ask your assistant to run `setup_st_logging`. It will automatically:
+1. Copy the logger plugin to ST's `plugins/` directory
+2. Enable server plugins in `config.yaml` (`enableServerPlugins: true`)
+
+Then **restart SillyTavern**. After restart, console output is captured to `data/st_console.log` — readable via the `get_st_console` tool.
+
+No terminal commands needed — your assistant handles everything.
 
 ### Configuration Reference
 
 | Environment Variable | Default | Description |
 |----------|---------|-------------|
-| `SILLYTAVERN_DATA_DIR` | Auto-detect | Path to ST `data/` directory |
-| `SILLYTAVERN_USER` | `default-user` | ST user handle |
-| `SILLYTAVERN_URL` | `http://localhost:8000` | ST HTTP API base URL |
+| `SILLYTAVERN_DATA_DIR` | Auto-detect | Path to SillyTavern `data/` directory |
+| `SILLYTAVERN_USER` | `default-user` | SillyTavern user handle |
+| `SILLYTAVERN_URL` | `http://localhost:8000` | SillyTavern HTTP API base URL |
+
+### Project Structure
+
+```
+sillytavern-mcp/
+├── sillytavern_mcp/
+│   ├── __init__.py              # FastMCP instance
+│   ├── __main__.py              # Entry point (python -m)
+│   ├── server.py                # Tool registration
+│   ├── png_util.py              # PNG chunk read/write (character card format)
+│   ├── character_schema.py      # V2/V3 character card JSON builder
+│   ├── default_avatar.py        # Fallback avatar generator
+│   ├── st_client.py             # SillyTavern HTTP API client
+│   ├── utils.py                 # Shared helpers, path resolution
+│   ├── st_console_plugin/       # Node.js server plugin for log capture
+│   │   ├── index.js
+│   │   └── package.json
+│   └── tools/
+│       ├── write_character.py
+│       ├── import_character.py
+│       ├── st_diagnostics.py
+│       ├── st_console.py
+│       └── setup_logging.py
+├── pyproject.toml
+├── LICENSE
+└── README.md
+```
 
 ---
 
 ## 中文
 
-[SillyTavern](https://github.com/SillyTavern/SillyTavern) 的 MCP 服务器。让 AI 编程助手（如 Kilo）能与运行中的 SillyTavern 交互——创建角色卡、运行体检、读取控制台日志。
+适用于 [SillyTavern](https://github.com/SillyTavern/SillyTavern) 的 MCP 服务器。
+
+兼容任何 MCP 客户端：**Claude Code**、**Cursor**、**Kilo**、**VS Code**（通过 MCP 扩展）等。
 
 基于 [fastmcp](https://github.com/jlowin/fastmcp) + [uv](https://docs.astral.sh/uv/) 构建。
 
@@ -125,68 +197,106 @@ No terminal commands needed — your agent handles everything.
 
 | 工具 | 功能 |
 |------|------|
-| `write_character_card` | 从名称、人格、首条消息等文本属性创建角色卡，生成 V2/V3 PNG 文件 |
+| `write_character_card` | 从文本属性（名称、人格、首条消息等）创建角色卡，生成 V2/V3 PNG 写入 characters 目录 |
 | `import_character_card` | 导入已有的角色卡 PNG 文件，原样复制不改元数据 |
-| `get_st_diagnostics` | 对运行中的 ST 做全面体检——API 状态、角色卡完整性、聊天文件、配置、插件 |
-| `get_st_console` | 读取 ST 的控制台日志（需要 st-console-logger 插件） |
-| `setup_st_logging` | 一键将控制台日志插件安装到 ST 的 plugins 目录 |
+| `get_st_diagnostics` | 对运行中的 SillyTavern 做全面体检——API 连通性、角色卡完整性、聊天文件、配置、插件。零配置开箱即用 |
+| `get_st_console` | 读取 st-console-logger 插件捕获的 SillyTavern 控制台输出。支持增量读取 |
+| `setup_st_logging` | 一键安装控制台日志插件到 ST 的 `plugins/` 目录，自动修改 `config.yaml` 启用服务器插件 |
 
-### 工作原理
+### 架构
 
 ```
-Kilo (AI助手) ←→ sillytavern-mcp (本项目) ←→ SillyTavern (你的ST)
-                        │
-                        ├── 写入角色卡 PNG 到 data/.../characters/
-                        ├── 通过 HTTP API 读取 ST 状态
-                        └── 通过 st_console.log 读取控制台输出（插件）
+MCP 客户端 (Claude Code / Cursor / Kilo / ...)
+    │
+    ▼
+sillytavern-mcp (本项目) ←── 读写 ──→ ST 数据目录 (角色卡、日志文件)
+    │
+    └── 调用 ──→ SillyTavern HTTP API (状态查询、角色列表、CSRF)
 ```
 
-### 安装教程
+### 安装
 
-**第一步：安装 Python 3.11+**
-
-https://www.python.org/downloads/
-
-> Windows 安装时请勾选 **"Add Python to PATH"**（添加到环境变量）。
-
-**第二步：安装 uv（Python 包管理器）**
-
-打开终端（cmd.exe 或 PowerShell），运行：
-
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
-
-安装完成后**重启终端**。
-
-**第三步：获取项目**
+**前置依赖：** Python 3.11+ 和 [uv](https://docs.astral.sh/uv/#installation)
 
 ```bash
 git clone <仓库地址> sillytavern-mcp
 cd sillytavern-mcp
-```
-
-或者从 GitHub 下载 ZIP 解压。
-
-**第四步：安装依赖**
-
-```bash
 uv sync
 ```
 
-这会自动创建虚拟环境并安装所有依赖包。
+### MCP 客户端配置
 
-**第五步：配置到 Kilo**
+根据你使用的 MCP 客户端，选择对应的配置方式。
 
-将以下内容添加到你的 `kilo.json`（全局路径 `C:\Users\<用户名>\.config\kilo\kilo.json`，或项目目录下的）：
+#### 方式 1：VS Code
+
+在 `.vscode/mcp.json` 或 VS Code 的 MCP 设置中添加：
+
+```json
+{
+  "servers": {
+    "sillytavern-mcp": {
+      "type": "local",
+      "command": ["uv", "run", "--directory", "D:\\path\\to\\sillytavern-mcp", "python", "-m", "sillytavern_mcp"],
+      "env": {
+        "SILLYTAVERN_DATA_DIR": "D:\\path\\to\\SillyTavern\\data",
+        "SILLYTAVERN_USER": "default-user",
+        "SILLYTAVERN_URL": "http://localhost:8000"
+      }
+    }
+  }
+}
+```
+
+#### 方式 2：Claude Code
+
+在 `~/.claude/settings.json` 中添加：
+
+```json
+{
+  "mcpServers": {
+    "sillytavern-mcp": {
+      "command": "uv",
+      "args": ["run", "--directory", "/path/to/sillytavern-mcp", "python", "-m", "sillytavern_mcp"],
+      "env": {
+        "SILLYTAVERN_DATA_DIR": "/path/to/SillyTavern/data",
+        "SILLYTAVERN_USER": "default-user",
+        "SILLYTAVERN_URL": "http://localhost:8000"
+      }
+    }
+  }
+}
+```
+
+#### 方式 3：Cursor
+
+在 Cursor 设置 → MCP Servers → 添加新服务：
+
+```json
+{
+  "name": "sillytavern-mcp",
+  "type": "command",
+  "command": "uv",
+  "args": ["run", "--directory", "/path/to/sillytavern-mcp", "python", "-m", "sillytavern_mcp"],
+  "env": {
+    "SILLYTAVERN_DATA_DIR": "/path/to/SillyTavern/data",
+    "SILLYTAVERN_USER": "default-user",
+    "SILLYTAVERN_URL": "http://localhost:8000"
+  }
+}
+```
+
+#### 方式 4：Kilo
+
+在 `~/.config/kilo/kilo.json` 中添加：
 
 ```json
 {
   "sillytavern-mcp": {
     "type": "local",
-    "command": ["uv", "run", "--directory", "C:\\path\\to\\sillytavern-mcp", "python", "-m", "sillytavern_mcp"],
+    "command": ["uv", "run", "--directory", "/path/to/sillytavern-mcp", "python", "-m", "sillytavern_mcp"],
     "environment": {
-      "SILLYTAVERN_DATA_DIR": "C:\\path\\to\\SillyTavern\\data",
+      "SILLYTAVERN_DATA_DIR": "/path/to/SillyTavern/data",
       "SILLYTAVERN_USER": "default-user",
       "SILLYTAVERN_URL": "http://localhost:8000"
     },
@@ -195,24 +305,29 @@ uv sync
 }
 ```
 
-把路径换成你实际的 SillyTavern 安装位置。
+### 快速测试
 
-**第六步：验证是否成功**
+配置完成后，验证服务器能正常连接：
 
-在 Kilo 中对 AI 助手说：**"检查 ST 的状态"**
+```bash
+uv run python -m sillytavern_mcp
+```
 
-助手会调用 `get_st_diagnostics` 工具并返回体检结果。
+服务器会以 stdio 模式启动，等待客户端的 MCP 协议消息。没有输出即表示启动成功。
+
+在你的 AI 助手中输入：**"检查一下我的 SillyTavern 的状态"**
 
 ### 可选：启用控制台日志
 
-如果你想让 AI 助手能读取 ST 的控制台输出（错误信息、模型加载等），只需：
+想让你的 AI 助手能读取 SillyTavern 的控制台输出（错误信息、模型加载等）？
 
-1. 对 AI 助手说：**"帮我安装日志插件"**
-2. 助手会调用 `setup_st_logging`，自动完成：
-   - 将插件复制到 ST 的 `plugins/` 目录
-   - 在 `config.yaml` 中启用服务器插件
-3. **重启 SillyTavern**（关闭再打开）
-4. 重启后对助手说：**"看看 ST 的控制台输出"**
+对 AI 助手说：**"帮我安装日志插件"**
+
+它会自动调用 `setup_st_logging` 完成：
+1. 将日志插件复制到 ST 的 `plugins/` 目录
+2. 在 `config.yaml` 中启用服务器插件
+
+然后**重启 SillyTavern**。重启后，控制台输出会自动写入 `data/st_console.log`，通过 `get_st_console` 工具即可读取。
 
 全程不需要手动操作终端——助手会帮你做完。
 
@@ -220,13 +335,40 @@ uv sync
 
 | 环境变量 | 默认值 | 说明 |
 |----------|--------|------|
-| `SILLYTAVERN_DATA_DIR` | 自动检测 | ST 的 `data/` 目录路径 |
-| `SILLYTAVERN_USER` | `default-user` | ST 用户名 |
-| `SILLYTAVERN_URL` | `http://localhost:8000` | ST 的 HTTP API 地址 |
+| `SILLYTAVERN_DATA_DIR` | 自动检测 | SillyTavern 的 `data/` 目录路径 |
+| `SILLYTAVERN_USER` | `default-user` | SillyTavern 用户名 |
+| `SILLYTAVERN_URL` | `http://localhost:8000` | SillyTavern HTTP API 地址 |
+
+### 项目结构
+
+```
+sillytavern-mcp/
+├── sillytavern_mcp/
+│   ├── __init__.py              # FastMCP 实例
+│   ├── __main__.py              # 启动入口 (python -m)
+│   ├── server.py                # 工具注册
+│   ├── png_util.py              # PNG chunk 读写（角色卡格式）
+│   ├── character_schema.py      # V2/V3 角色卡 JSON 构建
+│   ├── default_avatar.py        # 无头像时的占位图生成
+│   ├── st_client.py             # SillyTavern HTTP API 客户端
+│   ├── utils.py                 # 共用函数、路径解析
+│   ├── st_console_plugin/       # Node.js 服务端日志插件
+│   │   ├── index.js
+│   │   └── package.json
+│   └── tools/
+│       ├── write_character.py
+│       ├── import_character.py
+│       ├── st_diagnostics.py
+│       ├── st_console.py
+│       └── setup_logging.py
+├── pyproject.toml
+├── LICENSE
+└── README.md
+```
 
 ---
 
-## License
+## License / 许可证
 
 This project is licensed under the **GNU Affero General Public License v3.0** (AGPL-3.0), the same license as SillyTavern.
 
