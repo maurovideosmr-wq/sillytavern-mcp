@@ -23,16 +23,20 @@ Built with [fastmcp](https://github.com/jlowin/fastmcp) + [uv](https://docs.astr
 | `get_st_diagnostics` | Comprehensive health check on a running SillyTavern instance — API connectivity, character card integrity, chat files, config, plugins. Zero configuration needed. |
 | `get_st_console` | Read the SillyTavern console log captured by the st-console-logger plugin. Supports incremental reading. |
 | `setup_st_logging` | One-click install of the console logger plugin into SillyTavern's `plugins/` directory and enable server plugins in `config.yaml`. |
-| `list_doc` | List all available JS-Slash-Runner (Tavern Helper) documentation topics. Returns a numbered list of doc names. |
-| `read_doc` | Read the full content of a JS-Slash-Runner documentation page by topic name. |
+| `list_doc` | List all available documentation topics (TH, EJS Templates, MVU). |
+| `read_doc` | Read the full content of a documentation page by topic name. |
 
 ### Bundled Resources
 
-This server bundles 21 distilled documentation pages for **JS-Slash-Runner (Tavern Helper)**, covering scripting, macros, events, character management, worldbooks, variables, regex, audio, presets, chat messages, injection, extensions, and more. The AI can reference these docs to help write or debug TH scripts without leaving the chat.
+This server bundles **46 distilled documentation pages** across three SillyTavern frameworks:
 
-Available via the `list_doc` and `read_doc` tools:
+| Framework | Topics | Coverage |
+|-----------|--------|----------|
+| **JS-Slash-Runner (Tavern Helper)** | 21 | Scripting, macros, events, characters, worldbooks, variables, regex, audio, presets, chat messages, injection, extensions |
+| **ST-Prompt-Template (EJS Templates)** | 14 | EJS template engine, variable system, injection, characters, presets, regex, utilities, events, worldbook |
+| **MagVarUpdate (MVU Variable Framework)** | 11 | Variable state management, schema protection, commands, extra-model analysis, cleanup, init, API |
 
-`about`, `audio`, `builtins`, `changelog`, `characters`, `chat-messages`, `events`, `extensions`, `generate`, `import-export`, `index`, `inject`, `interop`, `macros`, `presets`, `scripts`, `sharing`, `tavern-regex`, `utilities`, `variables`, `worldbook`
+Available via `list_doc` and `read_doc` tools. The AI can reference these docs to help write or debug scripts without leaving the chat.
 
 ### Architecture
 
@@ -186,7 +190,7 @@ sillytavern-mcp/
 │   │   └── package.json
 │   ├── resources/
 │   │   ├── __init__.py
-│   │   └── docs_distilled.py    # 21 TH doc resources (docs://TH/*)
+│   │   └── docs_distilled.py    # 46 doc resources (docs://TH/*, docs://STPT/*, docs://MVU/*)
 │   └── tools/
 │       ├── write_character.py
 │       ├── import_character.py
@@ -195,7 +199,9 @@ sillytavern-mcp/
 │       ├── setup_logging.py
 │       └── th_doc_reader.py     # list_doc / read_doc tools
 ├── docs/
-│   └── JS-Slash-Runner-Distilled/  # 21 distilled TH doc files
+│   ├── JS-Slash-Runner-Distilled/     # 21 distilled TH doc files
+│   ├── ST-Prompt-Template-Distilled/  # 14 distilled STPT doc files
+│   └── MagVarUpdate-Distilled/        # 11 distilled MVU doc files
 ├── pyproject.toml
 ├── LICENSE
 └── README.md
@@ -222,16 +228,20 @@ sillytavern-mcp/
 | `get_st_diagnostics` | 对运行中的 SillyTavern 做全面体检——API 连通性、角色卡完整性、聊天文件、配置、插件。零配置开箱即用 |
 | `get_st_console` | 读取 st-console-logger 插件捕获的 SillyTavern 控制台输出。支持增量读取 |
 | `setup_st_logging` | 一键安装控制台日志插件到 ST 的 `plugins/` 目录，自动修改 `config.yaml` 启用服务器插件 |
-| `list_doc` | 列出所有可用的 JS-Slash-Runner（酒馆助手）文档主题 |
-| `read_doc` | 按主题名称读取 JS-Slash-Runner 文档的完整内容 |
+| `list_doc` | 列出所有可用的文档主题（TH、EJS 模板、MVU） |
+| `read_doc` | 按主题名称读取文档的完整内容 |
 
 ### 内置文档
 
-本服务内置 21 篇 **JS-Slash-Runner（酒馆助手）** 蒸馏文档，涵盖脚本、宏、事件、角色管理、世界书、变量、正则、音频、预设、聊天消息、注入、扩展等。AI 可直接参考这些文档来编写或调试 TH 脚本。
+本服务内置 **46 篇蒸馏文档**，覆盖三个 SillyTavern 框架：
 
-通过 `list_doc` 和 `read_doc` 工具访问：
+| 框架 | 主题数 | 覆盖内容 |
+|------|--------|----------|
+| **JS-Slash-Runner (酒馆助手)** | 21 | 脚本、宏、事件、角色、世界书、变量、正则、音频、预设、聊天消息、注入、扩展 |
+| **ST-Prompt-Template (EJS 模板)** | 14 | EJS 模板引擎、变量系统、注入、角色、预设、正则、工具函数、事件、世界书 |
+| **MagVarUpdate (MVU 变量框架)** | 11 | 变量状态管理、Schema 保护、更新命令、额外模型解析、清理、初始化、API |
 
-`about`、`audio`、`builtins`、`changelog`、`characters`、`chat-messages`、`events`、`extensions`、`generate`、`import-export`、`index`、`inject`、`interop`、`macros`、`presets`、`scripts`、`sharing`、`tavern-regex`、`utilities`、`variables`、`worldbook`
+AI 可直接参考这些文档来编写或调试脚本，无需离开聊天界面。
 
 ### 架构
 
@@ -387,7 +397,7 @@ sillytavern-mcp/
 │   │   └── package.json
 │   ├── resources/
 │   │   ├── __init__.py
-│   │   └── docs_distilled.py    # 21 篇 TH 文档资源 (docs://TH/*)
+│   │   └── docs_distilled.py    # 46 篇文档资源 (docs://TH/*, docs://STPT/*, docs://MVU/*)
 │   └── tools/
 │       ├── write_character.py
 │       ├── import_character.py
@@ -396,7 +406,9 @@ sillytavern-mcp/
 │       ├── setup_logging.py
 │       └── th_doc_reader.py     # list_doc / read_doc 工具
 ├── docs/
-│   └── JS-Slash-Runner-Distilled/  # 21 篇蒸馏 TH 文档
+│   ├── JS-Slash-Runner-Distilled/     # 21 篇蒸馏 TH 文档
+│   ├── ST-Prompt-Template-Distilled/  # 14 篇蒸馏 STPT 文档
+│   └── MagVarUpdate-Distilled/        # 11 篇蒸馏 MVU 文档
 ├── pyproject.toml
 ├── LICENSE
 └── README.md
