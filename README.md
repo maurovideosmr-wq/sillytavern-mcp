@@ -23,6 +23,16 @@ Built with [fastmcp](https://github.com/jlowin/fastmcp) + [uv](https://docs.astr
 | `get_st_diagnostics` | Comprehensive health check on a running SillyTavern instance — API connectivity, character card integrity, chat files, config, plugins. Zero configuration needed. |
 | `get_st_console` | Read the SillyTavern console log captured by the st-console-logger plugin. Supports incremental reading. |
 | `setup_st_logging` | One-click install of the console logger plugin into SillyTavern's `plugins/` directory and enable server plugins in `config.yaml`. |
+| `list_doc` | List all available JS-Slash-Runner (Tavern Helper) documentation topics. Returns a numbered list of doc names. |
+| `read_doc` | Read the full content of a JS-Slash-Runner documentation page by topic name. |
+
+### Bundled Resources
+
+This server bundles 21 distilled documentation pages for **JS-Slash-Runner (Tavern Helper)**, covering scripting, macros, events, character management, worldbooks, variables, regex, audio, presets, chat messages, injection, extensions, and more. The AI can reference these docs to help write or debug TH scripts without leaving the chat.
+
+Available via the `list_doc` and `read_doc` tools:
+
+`about`, `audio`, `builtins`, `changelog`, `characters`, `chat-messages`, `events`, `extensions`, `generate`, `import-export`, `index`, `inject`, `interop`, `macros`, `presets`, `scripts`, `sharing`, `tavern-regex`, `utilities`, `variables`, `worldbook`
 
 ### Architecture
 
@@ -165,7 +175,7 @@ sillytavern-mcp/
 ├── sillytavern_mcp/
 │   ├── __init__.py              # FastMCP instance
 │   ├── __main__.py              # Entry point (python -m)
-│   ├── server.py                # Tool registration
+│   ├── server.py                # Tool & resource registration
 │   ├── png_util.py              # PNG chunk read/write (character card format)
 │   ├── character_schema.py      # V2/V3 character card JSON builder
 │   ├── default_avatar.py        # Fallback avatar generator
@@ -174,12 +184,18 @@ sillytavern-mcp/
 │   ├── st_console_plugin/       # Node.js server plugin for log capture
 │   │   ├── index.js
 │   │   └── package.json
+│   ├── resources/
+│   │   ├── __init__.py
+│   │   └── docs_distilled.py    # 21 TH doc resources (docs://TH/*)
 │   └── tools/
 │       ├── write_character.py
 │       ├── import_character.py
 │       ├── st_diagnostics.py
 │       ├── st_console.py
-│       └── setup_logging.py
+│       ├── setup_logging.py
+│       └── th_doc_reader.py     # list_doc / read_doc tools
+├── docs/
+│   └── JS-Slash-Runner-Distilled/  # 21 distilled TH doc files
 ├── pyproject.toml
 ├── LICENSE
 └── README.md
@@ -206,6 +222,16 @@ sillytavern-mcp/
 | `get_st_diagnostics` | 对运行中的 SillyTavern 做全面体检——API 连通性、角色卡完整性、聊天文件、配置、插件。零配置开箱即用 |
 | `get_st_console` | 读取 st-console-logger 插件捕获的 SillyTavern 控制台输出。支持增量读取 |
 | `setup_st_logging` | 一键安装控制台日志插件到 ST 的 `plugins/` 目录，自动修改 `config.yaml` 启用服务器插件 |
+| `list_doc` | 列出所有可用的 JS-Slash-Runner（酒馆助手）文档主题 |
+| `read_doc` | 按主题名称读取 JS-Slash-Runner 文档的完整内容 |
+
+### 内置文档
+
+本服务内置 21 篇 **JS-Slash-Runner（酒馆助手）** 蒸馏文档，涵盖脚本、宏、事件、角色管理、世界书、变量、正则、音频、预设、聊天消息、注入、扩展等。AI 可直接参考这些文档来编写或调试 TH 脚本。
+
+通过 `list_doc` 和 `read_doc` 工具访问：
+
+`about`、`audio`、`builtins`、`changelog`、`characters`、`chat-messages`、`events`、`extensions`、`generate`、`import-export`、`index`、`inject`、`interop`、`macros`、`presets`、`scripts`、`sharing`、`tavern-regex`、`utilities`、`variables`、`worldbook`
 
 ### 架构
 
@@ -350,7 +376,7 @@ sillytavern-mcp/
 ├── sillytavern_mcp/
 │   ├── __init__.py              # FastMCP 实例
 │   ├── __main__.py              # 启动入口 (python -m)
-│   ├── server.py                # 工具注册
+│   ├── server.py                # 工具 & 资源注册
 │   ├── png_util.py              # PNG chunk 读写（角色卡格式）
 │   ├── character_schema.py      # V2/V3 角色卡 JSON 构建
 │   ├── default_avatar.py        # 无头像时的占位图生成
@@ -359,12 +385,18 @@ sillytavern-mcp/
 │   ├── st_console_plugin/       # Node.js 服务端日志插件
 │   │   ├── index.js
 │   │   └── package.json
+│   ├── resources/
+│   │   ├── __init__.py
+│   │   └── docs_distilled.py    # 21 篇 TH 文档资源 (docs://TH/*)
 │   └── tools/
 │       ├── write_character.py
 │       ├── import_character.py
 │       ├── st_diagnostics.py
 │       ├── st_console.py
-│       └── setup_logging.py
+│       ├── setup_logging.py
+│       └── th_doc_reader.py     # list_doc / read_doc 工具
+├── docs/
+│   └── JS-Slash-Runner-Distilled/  # 21 篇蒸馏 TH 文档
 ├── pyproject.toml
 ├── LICENSE
 └── README.md

@@ -37,3 +37,6 @@ Test/
 
 # uv
 uv.lock
+
+# Undistilled JS-Slash-Runner source docs (not MCP resources)
+docs/JS-Slash-Runner-Doc/
