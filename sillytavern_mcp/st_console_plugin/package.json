@@ -1,0 +1,9 @@
+{
+    "name": "st-console-logger",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "Logs ST console output to st_console.log for MCP diagnostics",
+    "main": "index.js",
+    "author": "sillytavern-mcp",
+    "license": "MIT"
+}

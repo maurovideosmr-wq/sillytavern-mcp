@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+*.egg
+.python-version
+
+# Virtual environment
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Kilo / agent working files
+.kilo/plans/
+.kilo/tmp_*
+.kilo/*.py
+
+# SillyTavern vendor (user must provide their own ST)
+Vendor/
+
+# Test assets
+Test/
+
+# ST console logs (generated at runtime)
+**/st_console.log
+
+# uv
+uv.lock
