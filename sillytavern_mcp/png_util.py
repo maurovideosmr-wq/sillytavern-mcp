@@ -1,4 +1,5 @@
 import json
+import os
 import struct
 import zlib
 import base64
@@ -79,3 +80,54 @@ def embed_character_json(png_bytes: bytes, json_str: str) -> bytes:
         chunks.append(ccv3_chunk)
 
     return assemble_png(chunks)
+
+
+def extract_character_json(png_bytes: bytes) -> dict:
+    chunks = parse_chunks(png_bytes)
+
+    ccv3_indices = find_text_chunks(chunks, b"ccv3")
+    if ccv3_indices:
+        text_data = chunks[ccv3_indices[0]]["data"]
+        null_pos = text_data.find(b"\x00")
+        b64_text = text_data[null_pos + 1:].decode("latin-1")
+        json_str = base64.b64decode(b64_text).decode("utf-8")
+        return json.loads(json_str)
+
+    chara_indices = find_text_chunks(chunks, b"chara")
+    if chara_indices:
+        text_data = chunks[chara_indices[0]]["data"]
+        null_pos = text_data.find(b"\x00")
+        b64_text = text_data[null_pos + 1:].decode("latin-1")
+        json_str = base64.b64decode(b64_text).decode("utf-8")
+        return json.loads(json_str)
+
+    raise ValueError("No character metadata (chara/ccv3) found in PNG")
+
+
+_IMAGE_MIME = {
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".webp": "image/webp",
+    ".gif": "image/gif",
+    ".bmp": "image/bmp",
+}
+
+
+def image_file_to_data_uri(file_path: str) -> str:
+    ext = os.path.splitext(file_path)[1].lower()
+    mime = _IMAGE_MIME.get(ext, "image/png")
+    with open(file_path, "rb") as f:
+        raw = f.read()
+    b64 = base64.b64encode(raw).decode("ascii")
+    return f"data:{mime};base64,{b64}"
+
+
+def data_uri_to_bytes(data_uri: str) -> tuple[bytes, str]:
+    if "," not in data_uri:
+        raise ValueError("Not a valid data URI")
+    header, b64_data = data_uri.split(",", 1)
+    mime = header.split(";")[0] if header.startswith("data:") else "image/png"
+    mime = mime.replace("data:", "", 1)
+    raw = base64.b64decode(b64_data)
+    return raw, mime

@@ -8,6 +8,7 @@ from sillytavern_mcp.tools.st_diagnostics import register_tool as register_diagn
 from sillytavern_mcp.tools.st_console import register_tool as register_console
 from sillytavern_mcp.tools.setup_logging import register_tool as register_setup
 from sillytavern_mcp.tools.th_doc_reader import register_tool as register_th_docs
+from sillytavern_mcp.tools.png_json_converter import register_tool as register_png_json
 
 logger = logging.getLogger(__name__)
 
@@ -19,5 +20,6 @@ def setup():
     register_console(mcp)
     register_setup(mcp)
     register_th_docs(mcp)
+    register_png_json(mcp)
     docs_resources.register(mcp)
     logger.info("Tools and resources registered")

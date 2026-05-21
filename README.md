@@ -25,6 +25,11 @@ Built with [fastmcp](https://github.com/jlowin/fastmcp) + [uv](https://docs.astr
 | `setup_st_logging` | One-click install of the console logger plugin into SillyTavern's `plugins/` directory and enable server plugins in `config.yaml`. |
 | `list_doc` | List all available documentation topics (TH, EJS Templates, MVU). |
 | `read_doc` | Read the full content of a documentation page by topic name. |
+| `convert_png_to_json` | Extract V2/V3 character metadata from a PNG card and save as `.json`. |
+| `convert_json_to_png` | Build a PNG character card from a `.json` file with avatar resolution (embedded > file > ST default > placeholder). |
+| `embed_cover_image` | Embed a cover/banner image into a character card's `extensions.cover` as base64 data URI. |
+| `extract_cover_image` | Extract the cover image from a character card and save as an image file. |
+| `get_character_card_info` | Read a character card PNG and return its metadata as a formatted text summary. |
 
 ### Bundled Resources
 
@@ -197,7 +202,8 @@ sillytavern-mcp/
 │       ├── st_diagnostics.py
 │       ├── st_console.py
 │       ├── setup_logging.py
-│       └── th_doc_reader.py     # list_doc / read_doc tools
+│       ├── th_doc_reader.py       # list_doc / read_doc tools
+│       └── png_json_converter.py  # convert_png_to_json / convert_json_to_png / embed_cover_image / extract_cover_image / get_character_card_info
 ├── docs/
 │   ├── JS-Slash-Runner-Distilled/     # 21 distilled TH doc files
 │   ├── ST-Prompt-Template-Distilled/  # 14 distilled STPT doc files
@@ -230,6 +236,11 @@ sillytavern-mcp/
 | `setup_st_logging` | 一键安装控制台日志插件到 ST 的 `plugins/` 目录，自动修改 `config.yaml` 启用服务器插件 |
 | `list_doc` | 列出所有可用的文档主题（TH、EJS 模板、MVU） |
 | `read_doc` | 按主题名称读取文档的完整内容 |
+| `convert_png_to_json` | 从角色卡 PNG 提取 V2/V3 元数据，保存为 `.json` 文件 |
+| `convert_json_to_png` | 从 `.json` 文件生成角色卡 PNG，支持内嵌/外部/默认头像 |
+| `embed_cover_image` | 将封面图以 base64 data URI 嵌入角色卡的 `extensions.cover` |
+| `extract_cover_image` | 从角色卡中提取封面图保存为图片文件 |
+| `get_character_card_info` | 读取角色卡 PNG 并返回元数据文本摘要 |
 
 ### 内置文档
 
@@ -404,7 +415,8 @@ sillytavern-mcp/
 │       ├── st_diagnostics.py
 │       ├── st_console.py
 │       ├── setup_logging.py
-│       └── th_doc_reader.py     # list_doc / read_doc 工具
+│       ├── th_doc_reader.py     # list_doc / read_doc 工具
+│       └── png_json_converter.py  # PNG↔JSON 互转 & 封面嵌入/提取 工具
 ├── docs/
 │   ├── JS-Slash-Runner-Distilled/     # 21 篇蒸馏 TH 文档
 │   ├── ST-Prompt-Template-Distilled/  # 14 篇蒸馏 STPT 文档
