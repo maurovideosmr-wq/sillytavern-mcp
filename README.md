@@ -6,9 +6,11 @@
 
 ## English
 
-MCP (Model Context Protocol) server for [SillyTavern](https://github.com/SillyTavern/SillyTavern).
+An MCP server that bridges AI coding agents with [SillyTavern](https://github.com/SillyTavern/SillyTavern). It lets AI assistants **create character cards**, **run server diagnostics**, and **read console logs** — directly from their chat interface.
 
 Compatible with any MCP client: **Claude Code**, **Cursor**, **Kilo**, **VS Code** (via MCP extensions), and more.
+
+No SillyTavern modifications needed. No plugins required for basic operation. Just configure and go.
 
 Built with [fastmcp](https://github.com/jlowin/fastmcp) + [uv](https://docs.astral.sh/uv/).
 
@@ -187,9 +189,11 @@ sillytavern-mcp/
 
 ## 中文
 
-适用于 [SillyTavern](https://github.com/SillyTavern/SillyTavern) 的 MCP 服务器。
+适用于 [SillyTavern](https://github.com/SillyTavern/SillyTavern) 的 MCP 服务器。让 AI 助手能直接在聊天界面中 **创建角色卡**、**运行服务器诊断**、**读取控制台日志**。
 
 兼容任何 MCP 客户端：**Claude Code**、**Cursor**、**Kilo**、**VS Code**（通过 MCP 扩展）等。
+
+不需要修改 SillyTavern 代码，不需要安装插件即可使用基础功能。配置好就能用。
 
 基于 [fastmcp](https://github.com/jlowin/fastmcp) + [uv](https://docs.astral.sh/uv/) 构建。
 
